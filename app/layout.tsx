@@ -44,29 +44,33 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <SidebarProvider defaultOpen={defaultOpen}>
-              <div className="flex min-h-screen w-full">
-                {/* Sidebar */}
-                <AppSidebar />
+            <div className="relative min-h-screen">
+              {/* Gradient Background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 opacity-60 -z-10"></div>
+              <SidebarProvider defaultOpen={defaultOpen}>
+                <div className="flex min-h-screen w-full">
+                  {/* Sidebar */}
+                  <AppSidebar />
 
-                {/* Main Content Area */}
-                <div className="flex flex-col flex-grow w-full">
-                  {/* Main Content */}
-                  <main className="flex-grow p-4">
-                    <SidebarTrigger />
-                    <div className="mt-5">{children}</div>
-                  </main>
+                  {/* Main Content Area */}
+                  <div className="flex flex-col flex-grow w-full">
+                    {/* Main Content */}
+                    <main className="flex-grow p-4 relative z-10">
+                      <SidebarTrigger />
+                      <div className="mt-5">{children}</div>
+                    </main>
 
-                  {/* Footer */}
-                  <footer className="mt-auto">
-                    <Footer />
-                  </footer>
+                    {/* Footer */}
+                    <footer className="mt-auto">
+                      <Footer />
+                    </footer>
+                  </div>
                 </div>
-              </div>
 
-              {/* Cookie Banner (Global, not inside flex containers) */}
-              <CookieBanner />
-            </SidebarProvider>
+                {/* Cookie Banner (Global, not inside flex containers) */}
+                <CookieBanner />
+              </SidebarProvider>
+            </div>
           </ThemeProvider>
         </AppProvider>
       </body>
