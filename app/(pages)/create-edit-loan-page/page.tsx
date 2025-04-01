@@ -59,7 +59,7 @@ export default function CreateEditLoan() {
   }
 
   const calculateWithAI = async () => {
-    if (environment === "PROD") {
+    if (environment !== "AI") {
       setValues((prev) => {
         // Clone startDate to prevent modification of original state
         const startDate = new Date(values.startdate);
