@@ -12,3 +12,31 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Loan {
+  id                Int       @id @default(autoincrement())
+  customerName      String
+  customerEmail     String
+  customerPhone     String
+  customerSalary    Float
+  loanAmount        Float
+  interestRate      Float
+  loanTerm          Int
+  startDate         DateTime
+  endDate           DateTime
+  monthlyPayment    Float
+  totalRepayment    Float
+  outstandingAmount Float
+  loanStatus        LoanStatus
+  createdAt         DateTime
+  updatedAt         DateTime
+}
+
+enum LoanStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PAID
+  OVERDUE
+}
+
