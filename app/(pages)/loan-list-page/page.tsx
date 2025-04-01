@@ -37,6 +37,7 @@ import { LoanModel } from "@/app/utils/loanModel";
 import { useEffect, useState } from "react";
 import { getLoans } from "@/app/utils/loanCRUD";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export const getColumns = (
   onViewLoanDetails: (loan: LoanModel) => void
@@ -291,6 +292,16 @@ export default function ListLoans() {
           >
             Next
           </Button>
+        </div>
+      </div>
+
+      <div className="flex h-[10vh] p-2">
+        <div className="flex flex-col w-full">
+          <div className="mt-auto flex justify-end">
+            <Button className="bg-yellow-400">
+              <Link href="/create-edit-loan-page">Create New Loan</Link>
+            </Button>
+          </div>
         </div>
       </div>
     </div>
