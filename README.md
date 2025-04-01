@@ -30,9 +30,11 @@ git clone https://github.com/Blaarslaai/my-lma.git
 npm install
 ```
 
-2. Download and Install [ollama](https://ollama.com/)
+2. Download and Install [PostGreSQL](https://www.postgresql.org/download/)
 
-3. Run the following commands to setup ollama
+3. Download and Install [ollama](https://ollama.com/)
+
+4. Run the following commands to setup ollama
 
 ```bash
 ollama pull llama3
