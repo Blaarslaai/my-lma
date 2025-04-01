@@ -20,18 +20,18 @@ export default function CreateEditLoan() {
   const { theme } = useTheme();
 
   const [values, setValues] = useState({
-    customerName: "",
-    customerEmail: "",
-    customerPhone: "",
-    customerSalary: 0,
-    loanAmount: 0,
-    interestRate: [17],
-    loanTerm: 0,
-    startDate: new Date(),
-    endDate: new Date(),
-    monthlyPayment: 0,
-    totalRepayment: 0,
-    loanStatus: LoanStatus,
+    customername: "",
+    customeremail: "",
+    customerphone: "",
+    customersalary: 0,
+    loanamount: 0,
+    interestrate: [17],
+    loanterm: 0,
+    startdate: new Date(),
+    enddate: new Date(),
+    monthlypayment: 0,
+    totalrepayment: 0,
+    loanstatus: LoanStatus,
   });
 
   const handleChange = (
@@ -100,7 +100,7 @@ export default function CreateEditLoan() {
             <Input
               type="text"
               name="customerName"
-              value={values.customerName}
+              value={values.customername}
               onChange={handleChange}
             />
           </div>
@@ -109,7 +109,7 @@ export default function CreateEditLoan() {
             <Input
               type="email"
               name="customerEmail"
-              value={values.customerEmail}
+              value={values.customeremail}
               onChange={handleChange}
             />
           </div>
@@ -120,7 +120,7 @@ export default function CreateEditLoan() {
               placeholder="(012) 345 6789"
               name="customerPhone"
               maxLength={14}
-              value={values.customerPhone}
+              value={values.customerphone}
               onChange={handlePhoneChange}
             />
           </div>
@@ -129,7 +129,7 @@ export default function CreateEditLoan() {
             <Input
               type="number"
               name="customerSalary"
-              value={values.customerSalary}
+              value={values.customersalary}
               onChange={handleChange}
             />
           </div>
@@ -139,19 +139,19 @@ export default function CreateEditLoan() {
             <Input
               type="number"
               name="loanAmount"
-              value={values.loanAmount}
+              value={values.loanamount}
               onChange={handleChange}
             />
           </div>
           <Label htmlFor="loanTerm">
-            Interest Rate ({values.interestRate}%)
+            Interest Rate ({values.interestrate}%)
           </Label>
           <div className="mb-5">
             <Slider
               max={100}
               step={1}
               name="interestRate"
-              value={values.interestRate}
+              value={values.interestrate}
               onValueChange={(value) =>
                 handleSliderChange({ name: "interestRate", value })
               }
@@ -163,7 +163,7 @@ export default function CreateEditLoan() {
             <Input
               type="number"
               name="loanTerm"
-              value={values.loanTerm}
+              value={values.loanterm}
               onChange={handleChange}
             />
           </div>
@@ -173,8 +173,8 @@ export default function CreateEditLoan() {
             <PopoverTrigger asChild>
               <Button variant={"outline"}>
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {values.startDate ? (
-                  format(new Date(values.startDate), "PPP")
+                {values.startdate ? (
+                  format(new Date(values.startdate), "PPP")
                 ) : (
                   <span>Pick a date</span>
                 )}
@@ -183,11 +183,11 @@ export default function CreateEditLoan() {
             <PopoverContent className="w-auto p-0 z-10 bg-gray-100">
               <Calendar
                 mode="single"
-                selected={values.startDate}
+                selected={values.startdate}
                 onSelect={(date) =>
                   setValues((prev) => ({
                     ...prev,
-                    startDate: date || prev.startDate,
+                    startdate: date || prev.startdate,
                   }))
                 }
                 initialFocus
@@ -202,7 +202,7 @@ export default function CreateEditLoan() {
             <Input
               type="number"
               name="monthlyPayment"
-              value={values.monthlyPayment}
+              value={values.monthlypayment}
               onChange={handleChange}
             />
           </div>
@@ -211,7 +211,7 @@ export default function CreateEditLoan() {
             <Input
               type="number"
               name="totalRepayment"
-              value={values.totalRepayment}
+              value={values.totalrepayment}
               onChange={handleChange}
             />
           </div>
@@ -221,8 +221,8 @@ export default function CreateEditLoan() {
               <PopoverTrigger asChild>
                 <Button variant={"outline"}>
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {values.endDate ? (
-                    format(new Date(values.endDate), "PPP")
+                  {values.enddate ? (
+                    format(new Date(values.enddate), "PPP")
                   ) : (
                     <span>Pick a date</span>
                   )}
@@ -231,11 +231,11 @@ export default function CreateEditLoan() {
               <PopoverContent className="w-auto p-0 z-10 bg-gray-100">
                 <Calendar
                   mode="single"
-                  selected={values.endDate}
+                  selected={values.enddate}
                   onSelect={(date) =>
                     setValues((prev) => ({
                       ...prev,
-                      endDate: date || prev.endDate,
+                      enddate: date || prev.enddate,
                     }))
                   }
                   initialFocus

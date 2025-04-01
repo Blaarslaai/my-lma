@@ -1,19 +1,12 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
+import { LoanModel } from "./loanModel";
 
 // Define the context type
 interface AppContextType {
-  user: string | null;
-  setUser: (user: string | null) => void;
-  defaultOpen: boolean;
-  setDefaultOpen: (open: boolean) => void;
+  currentLoan: LoanModel | null;
+  setCurrentLoan: (loan: LoanModel) => void;
 }
 
 // Create context
@@ -21,21 +14,10 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 // Provider component
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<string | null>(null);
-  const [defaultOpen, setDefaultOpen] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("defaultOpen") === "true";
-    }
-    return false;
-  });
-
-  // Sync `defaultOpen` with localStorage
-  useEffect(() => {
-    localStorage.setItem("defaultOpen", JSON.stringify(defaultOpen));
-  }, [defaultOpen]);
+  const [currentLoan, setCurrentLoan] = useState<LoanModel | null>(null);
 
   return (
-    <AppContext.Provider value={{ user, setUser, defaultOpen, setDefaultOpen }}>
+    <AppContext.Provider value={{ currentLoan, setCurrentLoan }}>
       {children}
     </AppContext.Provider>
   );
@@ -44,5 +26,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 // Custom hook for context access
 export function useAppContext() {
   const context = useContext(AppContext);
+  if (!context) {
+    throw new Error("useAppContext must be used within an AppProvider");
+  }
   return context;
 }

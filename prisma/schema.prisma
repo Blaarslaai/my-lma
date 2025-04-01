@@ -15,20 +15,20 @@ datasource db {
 
 model Loan {
   id                Int       @id @default(autoincrement())
-  customerName      String
-  customerEmail     String
-  customerPhone     String
-  customerSalary    Float
-  loanAmount        Float
-  interestRate      Float
-  loanTerm          Int
-  startDate         DateTime
-  endDate           DateTime
-  monthlyPayment    Float
-  totalRepayment    Float
-  loanStatus        LoanStatus
-  createdAt         DateTime
-  updatedAt         DateTime
+  customername      String
+  customeremail     String
+  customerphone     String
+  customersalary    Float
+  loanamount        Float
+  interestrate      Float
+  loanterm          Int
+  startdate         DateTime
+  enddate           DateTime
+  monthlypayment    Float
+  totalrepayment    Float
+  loanstatus        LoanStatus
+  createdat         DateTime
+  updatedat         DateTime
 }
 
 enum LoanStatus {
