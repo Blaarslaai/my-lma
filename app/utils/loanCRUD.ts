@@ -1,3 +1,5 @@
+"use server";
+
 import { PrismaClient } from "@prisma/client";
 import { LoanStatus } from "./LoanStatus";
 import { LoanModel } from "./loanModel";
@@ -8,21 +10,21 @@ const prisma = new PrismaClient();
 export async function createLoan(loanDetails: LoanModel) {
   const newLoan = await prisma.loan.create({
     data: {
-      customerName: loanDetails.customerName,
-      customerEmail: loanDetails.customerEmail,
-      customerPhone: loanDetails.customerPhone,
-      customerSalary: loanDetails.customerSalary,
-      loanAmount: loanDetails.loanAmount,
-      interestRate: loanDetails.interestRate,
-      loanTerm: loanDetails.loanTerm,
-      startDate: loanDetails.startDate,
-      endDate: loanDetails.endDate,
-      monthlyPayment: loanDetails.monthlyPayment,
-      totalRepayment: loanDetails.totalRepayment,
-      outstandingAmount: loanDetails.outstandingAmount,
-      loanStatus: loanDetails.loanStatus,
-      createdAt: loanDetails.createdAt,
-      updatedAt: loanDetails.updatedAt,
+      customername: loanDetails.customername,
+      customeremail: loanDetails.customeremail,
+      customerphone: loanDetails.customerphone,
+      customersalary: loanDetails.customersalary,
+      loanamount: loanDetails.loanamount,
+      interestrate: loanDetails.interestrate,
+      loanterm: loanDetails.loanterm,
+      startdate: loanDetails.startdate,
+      enddate: loanDetails.enddate,
+      monthlypayment: loanDetails.monthlypayment,
+      totalrepayment: loanDetails.totalrepayment,
+      outstandingamount: loanDetails.outstandingamount,
+      loanstatus: loanDetails.loanstatus,
+      createdat: loanDetails.createdat,
+      updatedat: loanDetails.updatedat,
     },
   });
   console.log("Loan Created: ", newLoan);
@@ -31,7 +33,7 @@ export async function createLoan(loanDetails: LoanModel) {
 // Get Loans
 export async function getLoans() {
   const loans = await prisma.loan.findMany();
-  console.log("All Loans: ", loans);
+  return loans;
 }
 
 // Get Loan by ID
@@ -41,7 +43,7 @@ export async function getLoanById(loanId: number) {
       id: loanId,
     },
   });
-  console.log("Loan Details: ", loan);
+  return loan;
 }
 
 // Update Loan

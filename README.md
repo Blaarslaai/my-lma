@@ -71,7 +71,6 @@ CREATE TABLE "Loan" (
   endDate TIMESTAMP NOT NULL,  -- Loan end date
   monthlyPayment FLOAT NOT NULL,  -- Monthly payment for the loan
   totalRepayment FLOAT NOT NULL,  -- Total amount to be repaid including interest
-  outstandingAmount FLOAT NOT NULL,  -- Outstanding loan amount
   loanStatus "LoanStatus" NOT NULL,  -- Loan status using the enum type
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Timestamp when the loan was created
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Timestamp when the loan was last updated
