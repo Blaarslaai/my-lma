@@ -27,9 +27,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import "dotenv/config";
+import { createLoan } from "@/app/utils/loanCRUD";
 
 export default function CreateEditLoan() {
   const { theme } = useTheme();
+  const environment = process.env.NEXT_PUBLIC_ENV;
 
   const [values, setValues] = useState({
     customername: "",
@@ -43,28 +46,75 @@ export default function CreateEditLoan() {
     enddate: new Date(),
     monthlypayment: 0,
     totalrepayment: 0,
-    loanstatus: LoanStatus,
+    loanstatus: LoanStatus.PENDING,
   });
 
-  const calculateWithAI = async () => {
-    const response = await fetch("/api/ollama", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        customersalary: values.customersalary,
-        loanamount: values.loanamount,
-        loanterm: values.loanterm,
-        interestrate: values.interestrate[0],
-      }),
+  async function createNewLoan() {
+    await createLoan({
+      ...values,
+      id: 0,
+      createdat: new Date(),
+      updatedat: new Date(),
     });
+  }
 
-    const data = await response.json();
+  const calculateWithAI = async () => {
+    if (environment === "PROD") {
+      setValues((prev) => {
+        // Clone startDate to prevent modification of original state
+        const startDate = new Date(values.startdate);
+        const totalMonths = values.loanterm;
 
-    if (data.error) {
-      toast("Error", { description: data.error });
+        const yearsToAdd = Math.floor(totalMonths / 12);
+        const remainingMonths = totalMonths % 12;
+
+        // Create a new date object to avoid modifying state directly
+        const endDate = new Date(startDate);
+
+        endDate.setFullYear(startDate.getFullYear() + yearsToAdd);
+        endDate.setMonth(startDate.getMonth() + remainingMonths);
+
+        // Ensure day stays valid (e.g., Feb 30 issue)
+        if (endDate.getDate() !== startDate.getDate()) {
+          endDate.setDate(0); // Set to last valid day of the month
+        }
+
+        // Correct interest rate calculation
+        const interestRate = values.interestrate[0] / 100; // Convert to decimal
+        const totalRepayment =
+          values.loanamount * (1 + interestRate * values.loanterm);
+
+        // Correct monthly payment calculation
+        const monthlyPayment = totalRepayment / values.loanterm;
+
+        return {
+          ...prev,
+          enddate: endDate,
+          totalrepayment: totalRepayment,
+          monthlypayment: monthlyPayment,
+        };
+      });
     } else {
-      toast("Success", { description: "AI-calculated values received!" });
-      console.log(data.result);
+      const response = await fetch("/api/ollama", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customersalary: values.customersalary,
+          loanamount: values.loanamount,
+          loanterm: values.loanterm,
+          interestrate: values.interestrate[0],
+          startdate: values.startdate,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        toast("Error", { description: data.error });
+      } else {
+        toast("Success", { description: "AI-calculated values received!" });
+        console.log(data.result);
+      }
     }
   };
 
@@ -263,9 +313,21 @@ export default function CreateEditLoan() {
               <div className="flex">
                 <Button
                   className="bg-green-400"
-                  disabled={Object.values(values).some(
-                    (value) => String(value) !== "" && String(value) !== "0"
+                  disabled={Object.entries(values).some(([key, value]) =>
+                    [
+                      "customername",
+                      "customeremail",
+                      "customerphone",
+                      "customersalary",
+                      "loanamount",
+                      "loanterm",
+                      "monthlypayment",
+                      "totalrepayment",
+                    ].includes(key)
+                      ? !value || value == 0 || value === ""
+                      : false
                   )}
+                  onClick={createNewLoan}
                 >
                   Create Loan
                 </Button>

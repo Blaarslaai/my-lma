@@ -4,10 +4,16 @@ import "dotenv/config";
 export async function POST(req: Request) {
   try {
     const baseUrl = process.env.OLLAMA_BASE_URL;
-    const { customersalary, loanamount, loanterm, interestrate } =
+    const { customersalary, loanamount, loanterm, interestrate, startdate } =
       await req.json();
 
-    if (!customersalary || !loanamount || !loanterm || !interestrate) {
+    if (
+      !customersalary ||
+      !loanamount ||
+      !loanterm ||
+      !interestrate ||
+      !startdate
+    ) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -21,11 +27,14 @@ export async function POST(req: Request) {
       - Loan Amount: ${loanamount}
       - Interest Rate: ${interestrate}%
       - Loan Term: ${loanterm} months
+      - Start Date: ${startdate} months
 
       Calculate:
       - The monthly payment amount
       - The total repayment amount
       - Any financial insights
+
+      Only supply the three values in the order 
     `;
 
     // Send request to Ollama
@@ -42,9 +51,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const data = await response.json();
+    const data = await response.text();
 
-    return NextResponse.json({ result: data.response });
+    return NextResponse.json({ result: data });
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";

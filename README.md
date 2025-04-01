@@ -23,7 +23,7 @@
   2. GitHub Copilot
   3. ChatGPT
 
-## Setup Guide
+# Local Setup Guide
 
 Please follow the steps below to get the project running on your local
 
@@ -101,8 +101,16 @@ ollama pull llama3
 ollama serve
 ```
 
-- Edit your .env file and add the following value for local testing: `OLLAMA_BASE_URL:"http://localhost:11434"`
+- Edit your .env.local file and add the following value for local testing: `OLLAMA_BASE_URL=http://localhost:11434`
 
-5. Download and Install NGROK for local IP forwarding.
+# Production Setup Guide
+
+1. Download and Install ngrok for local IP forwarding.
 
 - This will be used to access our local OLLAMA model on Vercel (Our Deployment platform)
+
+```bash
+ngrok http 11434
+```
+
+- Edit your .env.production file and add the following value for production testing: `OLLAMA_BASE_URL=<public URL from ngrok>`
