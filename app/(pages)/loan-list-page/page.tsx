@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/table";
 import { LoanModel } from "@/app/utils/loanModel";
 import { useEffect, useState } from "react";
-import { getLoans } from "@/app/utils/loanCRUD";
+import { deleteLoan, getLoans } from "@/app/utils/loanCRUD";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -57,7 +57,9 @@ export const getColumns = (
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        onCheckedChange={(value) => {
+          row.toggleSelected(!!value);
+        }}
         aria-label="Select row"
       />
     ),
@@ -135,13 +137,13 @@ export default function ListLoans() {
   const [data, setData] = useState<LoanModel[]>([]);
   const router = useRouter();
 
-  useEffect(() => {
-    async function GetLoanData() {
-      const data = await getLoans();
-      console.log(data);
-      setData(data);
-    }
+  async function GetLoanData() {
+    const data = await getLoans();
+    // console.log(data);
+    setData(data);
+  }
 
+  useEffect(() => {
     GetLoanData();
   }, []);
 
@@ -298,9 +300,29 @@ export default function ListLoans() {
       <div className="flex h-[10vh] p-2">
         <div className="flex flex-col w-full">
           <div className="mt-auto flex justify-end">
-            <Button className="bg-yellow-400">
-              <Link href="/create-edit-loan-page">Create New Loan</Link>
+            <Button
+              className="bg-red-400"
+              disabled={table.getFilteredSelectedRowModel().rows.length === 0}
+              onClick={() => {
+                // console.log(table.getFilteredSelectedRowModel().rows);
+                table.getFilteredSelectedRowModel().rows.map((row) => {
+                  async function deleteCurrentLoan(id: number) {
+                    await deleteLoan(id);
+                  }
+
+                  deleteCurrentLoan(Number(row.id));
+                });
+
+                GetLoanData();
+              }}
+            >
+              Delete Selected Loans
             </Button>
+            <div className="ml-10">
+              <Button className="bg-yellow-400">
+                <Link href="/create-edit-loan-page">Create New Loan</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

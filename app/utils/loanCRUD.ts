@@ -58,7 +58,7 @@ export async function updateLoan(loanId: number) {
       updatedAt: new Date(),
     },
   });
-  console.log("Updated Loan: ", updatedLoan);
+  return updatedLoan;
 }
 
 // Delete Loan
@@ -68,5 +68,5 @@ export async function deleteLoan(loanId: number) {
       id: loanId,
     },
   });
-  console.log("Deleted Loan: ", deletedLoan);
+  return deletedLoan;
 }
