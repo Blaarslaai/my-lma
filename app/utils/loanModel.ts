@@ -13,7 +13,6 @@ export interface LoanModel {
   enddate: Date;
   monthlypayment: number;
   totalrepayment: number;
-  outstandingamount: number;
   loanstatus: LoanStatus;
   createdat: Date;
   updatedat: Date;

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import "dotenv/config";
 
 export async function POST(req: Request) {
   try {
@@ -45,6 +46,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ result: data.response });
   } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 });
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

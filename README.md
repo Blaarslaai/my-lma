@@ -65,7 +65,7 @@ CREATE TABLE "Loan" (
   customerPhone VARCHAR(20) NOT NULL,  -- Phone number of the customer
   customerSalary FLOAT NOT NULL,  -- Salary of the customer
   loanAmount FLOAT NOT NULL,  -- Amount of the loan
-  interestRate FLOAT NOT NULL,  -- Interest rate for the loan
+  interestRate FLOAT[] NOT NULL,  -- Interest rate for the loan
   loanTerm INT NOT NULL,  -- Loan term in months
   startDate TIMESTAMP NOT NULL,  -- Loan start date
   endDate TIMESTAMP NOT NULL,  -- Loan end date
@@ -80,8 +80,8 @@ CREATE TABLE "Loan" (
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
-  NEW."updatedAt" = CURRENT_TIMESTAMP;
-  RETURN NEW;
+  Loan."updatedAt" = CURRENT_TIMESTAMP;
+  RETURN Loan;
 END;
 $$ LANGUAGE plpgsql;
 

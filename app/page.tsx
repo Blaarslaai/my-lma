@@ -16,14 +16,14 @@ export default function Home() {
           </h1>
           <p className="text-lg opacity-80 mb-6 animate-slideUp">
             Here are some stats about my platform to get you excited:
-            <div className="flex justify-center">
-              <ul className="list-disc list-inside text-left text-sm">
-                <li>Built with my favorite stack.</li>
-                <li>Trusted by mostly me!</li>
-                <li>Over 9000 lines of code... I didn&apos;t count though.</li>
-              </ul>
-            </div>
           </p>
+          <span className="flex justify-center">
+            <ul className="list-disc list-inside text-left text-sm">
+              <li>Built with my favorite stack.</li>
+              <li>Trusted by mostly me!</li>
+              <li>Over 9000 lines of code... I didn&apos;t count though.</li>
+            </ul>
+          </span>
         </div>
       </div>
 

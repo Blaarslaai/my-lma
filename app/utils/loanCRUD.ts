@@ -1,8 +1,8 @@
 "use server";
 
 import { PrismaClient } from "@prisma/client";
-import { LoanStatus } from "./LoanStatus";
 import { LoanModel } from "./loanModel";
+import { LoanStatus } from "./LoanStatus";
 
 const prisma = new PrismaClient();
 
@@ -21,10 +21,7 @@ export async function createLoan(loanDetails: LoanModel) {
       enddate: loanDetails.enddate,
       monthlypayment: loanDetails.monthlypayment,
       totalrepayment: loanDetails.totalrepayment,
-      outstandingamount: loanDetails.outstandingamount,
       loanstatus: loanDetails.loanstatus,
-      createdat: loanDetails.createdat,
-      updatedat: loanDetails.updatedat,
     },
   });
   console.log("Loan Created: ", newLoan);
@@ -47,15 +44,25 @@ export async function getLoanById(loanId: number) {
 }
 
 // Update Loan
-export async function updateLoan(loanId: number) {
+export async function updateLoan(loanDetails: LoanModel) {
   const updatedLoan = await prisma.loan.update({
     where: {
-      id: loanId,
+      id: loanDetails.id,
     },
     data: {
-      loanStatus: LoanStatus.APPROVED,
-      outstandingAmount: 12000,
-      updatedAt: new Date(),
+      customername: loanDetails.customername,
+      customeremail: loanDetails.customeremail,
+      customerphone: loanDetails.customerphone,
+      customersalary: loanDetails.customersalary,
+      loanamount: Number(loanDetails.loanamount),
+      interestrate: loanDetails.interestrate,
+      loanterm: loanDetails.loanterm,
+      startdate: loanDetails.startdate,
+      enddate: loanDetails.enddate,
+      monthlypayment: loanDetails.monthlypayment,
+      totalrepayment: Number(loanDetails.totalrepayment),
+      loanstatus: LoanStatus[loanDetails.loanstatus as keyof typeof LoanStatus],
+      updatedat: loanDetails.updatedat,
     },
   });
   return updatedLoan;
