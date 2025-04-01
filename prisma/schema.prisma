@@ -26,7 +26,6 @@ model Loan {
   endDate           DateTime
   monthlyPayment    Float
   totalRepayment    Float
-  outstandingAmount Float
   loanStatus        LoanStatus
   createdAt         DateTime
   updatedAt         DateTime
