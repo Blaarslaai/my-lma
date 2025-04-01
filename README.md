@@ -1,19 +1,24 @@
-![screenshot](public\banner.png)
+![screenshot](https://github.com/Blaarslaai/my-lma/blob/master/public/banner.png)
 
 # Welcome to My-LMA <sub>Loan Application Management</sub> System
 
 ## Tech Used
 
 - Front-End
+
   1. React
   2. Typescript
   3. Tailwind CSS
   4. shadcn/ui
+
 - Back-End
+
   1. Next.js Server Actions
   2. PostGreSQL
   3. Prisma ORM
+
 - AI Tools
+
   1. ollama
   2. GitHub Copilot
   3. ChatGPT
@@ -31,6 +36,61 @@ npm install
 ```
 
 2. Download and Install [PostGreSQL](https://www.postgresql.org/download/)
+
+- Start PostgreSQL via pgAdmin
+
+- Create new database and customize your .env DATABASE_URL variable to your:
+
+  - Username
+  - Password
+  - Database Name
+
+- Run the following script in your database:
+
+```sql
+-- Create enum type for LoanStatus
+CREATE TYPE "LoanStatus" AS ENUM (
+  'PENDING',
+  'APPROVED',
+  'REJECTED',
+  'PAID',
+  'OVERDUE'
+);
+
+-- Create Loan table
+CREATE TABLE "Loan" (
+  id SERIAL PRIMARY KEY,  -- Auto incrementing primary key
+  customerName VARCHAR(255) NOT NULL,  -- Name of the customer
+  customerEmail VARCHAR(255) NOT NULL,  -- Email of the customer
+  customerPhone VARCHAR(20) NOT NULL,  -- Phone number of the customer
+  customerSalary FLOAT NOT NULL,  -- Salary of the customer
+  loanAmount FLOAT NOT NULL,  -- Amount of the loan
+  interestRate FLOAT NOT NULL,  -- Interest rate for the loan
+  loanTerm INT NOT NULL,  -- Loan term in months
+  startDate TIMESTAMP NOT NULL,  -- Loan start date
+  endDate TIMESTAMP NOT NULL,  -- Loan end date
+  monthlyPayment FLOAT NOT NULL,  -- Monthly payment for the loan
+  totalRepayment FLOAT NOT NULL,  -- Total amount to be repaid including interest
+  outstandingAmount FLOAT NOT NULL,  -- Outstanding loan amount
+  loanStatus "LoanStatus" NOT NULL,  -- Loan status using the enum type
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Timestamp when the loan was created
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Timestamp when the loan was last updated
+);
+
+-- Add trigger to update the 'updatedAt' field on any update
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW."updatedAt" = CURRENT_TIMESTAMP;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_updated_at
+  BEFORE UPDATE ON "Loan"
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+```
 
 3. Download and Install [ollama](https://ollama.com/)
 
