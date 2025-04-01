@@ -2,7 +2,7 @@ import ThemeToggle from "./themeToggle";
 
 export default function Footer() {
   return (
-    <footer className="py-8 mt-8 border">
+    <footer className="py-8 mt-8">
       <div className="container mx-auto px-6 text-center">
         <div className="mb-4">
           <h1 className="text-xl font-semibold">
@@ -38,7 +38,7 @@ export default function Footer() {
         </div>
 
         {/* Copyright Section */}
-        <div className="text-sm text-gray-400">
+        <div className="text-sm">
           <p>&copy; {new Date().getFullYear()} MY-LMA. All Rights Reserved.</p>
         </div>
       </div>

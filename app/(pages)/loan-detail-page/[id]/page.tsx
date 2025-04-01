@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LoanModel } from "@/app/utils/loanModel";
-import { getLoanById } from "@/app/utils/loanCRUD";
+import { getLoanById, updateLoan } from "@/app/utils/loanCRUD";
 import { Label } from "@/components/ui/label";
 import {
   Popover,
@@ -16,21 +16,98 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import { LoanStatus } from "@/app/utils/LoanStatus";
+import { Slider } from "@/components/ui/slider";
+import { useTheme } from "next-themes";
 
 export default function LoanDetails() {
+  const { theme } = useTheme();
   const { id } = useParams(); // Get loan ID from URL
-  const [loan, setLoan] = useState<LoanModel | null>(null);
+  const [loan, setLoan] = useState<LoanModel>({
+    id: 0,
+    customername: "",
+    customeremail: "",
+    customerphone: "",
+    customersalary: 0,
+    loanamount: 0,
+    interestrate: [17],
+    loanterm: 0,
+    startdate: new Date(),
+    enddate: new Date(),
+    monthlypayment: 0,
+    totalrepayment: 0,
+    loanstatus: LoanStatus.PENDING,
+    createdat: new Date(),
+    updatedat: new Date(),
+  });
 
   useEffect(() => {
     async function fetchLoan() {
       if (id) {
         const data = await getLoanById(Number(id)); // Fetch loan data
-        setLoan(data);
+        if (data) {
+          setLoan({
+            ...data,
+            loanstatus: LoanStatus[data.loanstatus as keyof typeof LoanStatus],
+            createdat: data.createdat ? new Date(data.createdat) : new Date(),
+            updatedat: data.updatedat ? new Date(data.updatedat) : new Date(),
+          });
+        }
       }
     }
 
     fetchLoan();
   }, [id]);
+
+  async function editLoan() {
+    if (loan) {
+      console.log(loan);
+      await updateLoan(loan);
+    }
+  }
+
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | { name: string; value: number[] | string | number }
+  ) => {
+    if ("target" in e) {
+      // Handle input change
+      setLoan((prev) => ({
+        ...prev,
+        [e.target.name]: e.target.value,
+      }));
+    } else {
+      // Handle slider change
+      setLoan((prev) => ({
+        ...prev,
+        [e.name]: e.value,
+      }));
+    }
+  };
+
+  const handlePhoneChange = (e: {
+    target: { name: string; value: string };
+  }) => {
+    let rawValue = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+
+    // Format the number according to the pattern (012) 345 6789
+    if (rawValue.length <= 3) {
+      rawValue = `(${rawValue}`;
+    } else if (rawValue.length <= 6) {
+      rawValue = `(${rawValue.slice(0, 3)}) ${rawValue.slice(3)}`;
+    } else {
+      rawValue = `(${rawValue.slice(0, 3)}) ${rawValue.slice(
+        3,
+        6
+      )} ${rawValue.slice(6, 10)}`;
+    }
+
+    setLoan((prev) => ({
+      ...prev,
+      [e.target.name]: rawValue,
+    }));
+  };
 
   if (!loan) {
     return <p>Loading loan details...</p>;
@@ -41,64 +118,76 @@ export default function LoanDetails() {
       <div className="flex flex-row mt-5">
         <div className="flex-1 mr-5">
           <h1 className="text-2xl">Customer Details</h1>
-          <Label htmlFor="customerName">Customer Name</Label>
+          <Label htmlFor="customername">Customer Name</Label>
           <div className="mb-5">
             <Input
               type="text"
-              name="customerName"
-              defaultValue={loan.customername}
-              readOnly
+              name="customername"
+              value={loan.customername}
+              onChange={handleChange}
             />
           </div>
-          <Label htmlFor="customerEmail">Customer Email</Label>
+          <Label htmlFor="customeremail">Customer Email</Label>
           <div className="mb-5">
             <Input
               type="email"
-              name="customerEmail"
-              defaultValue={loan.customeremail}
-              readOnly
+              name="customeremail"
+              value={loan.customeremail}
+              onChange={handleChange}
             />
           </div>
-          <Label htmlFor="customerPhone">Customer Phone Number</Label>
+          <Label htmlFor="customerphone">Customer Phone Number</Label>
           <div className="mb-5">
             <Input
               type="text"
               placeholder="(012) 345 6789"
-              name="customerPhone"
+              name="customerphone"
               maxLength={14}
-              defaultValue={loan.customerphone}
-              readOnly
+              value={loan.customerphone}
+              onChange={handlePhoneChange}
             />
           </div>
-          <Label htmlFor="customerSalary">Customer Salary</Label>
+          <Label htmlFor="customersalary">Customer Salary</Label>
           <div className="mb-10">
             <Input
               type="number"
-              name="customerSalary"
-              defaultValue={loan.customersalary}
-              readOnly
+              name="customersalary"
+              value={loan.customersalary}
+              onChange={handleChange}
             />
           </div>
           <h1 className="text-2xl">Loan Details</h1>
-          <Label htmlFor="loanAmount">Loan Amount</Label>
+          <Label htmlFor="loanamount">Loan Amount</Label>
           <div className="mb-5">
             <Input
               type="number"
-              name="loanAmount"
-              defaultValue={loan.loanamount}
-              readOnly
+              name="loanamount"
+              value={loan.loanamount}
+              onChange={handleChange}
             />
           </div>
-          <Label htmlFor="interestrate" className="mb-5">
+          <Label htmlFor="interestrate">
             Interest Rate ({loan.interestrate}%)
           </Label>
-          <Label htmlFor="loanTerm">Loan Term (Months)</Label>
+          <div className="mb-5">
+            <Slider
+              max={100}
+              step={1}
+              name="interestrate"
+              value={loan.interestrate}
+              onValueChange={(value) =>
+                handleChange({ name: "interestrate", value })
+              }
+              className={`${theme === "light" ? "bg-black" : "bg-white"} mt-5`}
+            />
+          </div>
+          <Label htmlFor="loanterm">Loan Term (Months)</Label>
           <div className="mb-5">
             <Input
               type="number"
-              name="loanTerm"
-              defaultValue={loan.loanterm}
-              readOnly
+              name="loanterm"
+              value={loan.loanterm}
+              onChange={handleChange}
             />
           </div>
 
@@ -115,28 +204,38 @@ export default function LoanDetails() {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0 z-10 bg-gray-100">
-              <Calendar mode="single" selected={loan.startdate} initialFocus />
+              <Calendar
+                mode="single"
+                selected={new Date(loan.startdate)}
+                onSelect={(date) =>
+                  setLoan((prev) => ({
+                    ...prev,
+                    startdate: date || prev.startdate,
+                  }))
+                }
+                initialFocus
+              />
             </PopoverContent>
           </Popover>
         </div>
         <div className="flex-1 flex flex-col">
           <h1 className="text-2xl">Calculated Details</h1>
-          <Label htmlFor="monthlyPayment">Monthly Payment</Label>
+          <Label htmlFor="monthlypayment">Monthly Payment</Label>
           <div className="mb-5">
             <Input
               type="number"
-              name="monthlyPayment"
-              defaultValue={loan.monthlypayment}
-              readOnly
+              name="monthlypayment"
+              value={loan.monthlypayment}
+              onChange={handleChange}
             />
           </div>
-          <Label htmlFor="totalRepayment">Total Repayment</Label>
+          <Label htmlFor="totalrepayment">Total Repayment</Label>
           <div className="mb-5">
             <Input
               type="number"
-              name="totalRepayment"
-              defaultValue={loan.totalrepayment}
-              readOnly
+              name="totalrepayment"
+              value={loan.totalrepayment}
+              onChange={handleChange}
             />
           </div>
           <div>
@@ -153,12 +252,22 @@ export default function LoanDetails() {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0 z-10 bg-gray-100">
-                <Calendar mode="single" selected={loan.enddate} initialFocus />
+                <Calendar
+                  mode="single"
+                  selected={new Date(loan.enddate)}
+                  onSelect={(date) =>
+                    setLoan((prev) => ({
+                      ...prev,
+                      enddate: date || prev.enddate,
+                    }))
+                  }
+                  initialFocus
+                />
               </PopoverContent>
             </Popover>
           </div>
           <div className="mt-auto">
-            <Button className="bg-yellow-400 float-end">
+            <Button className="bg-yellow-400 float-end" onClick={editLoan}>
               Edit Loan Details
             </Button>
           </div>

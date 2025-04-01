@@ -35,112 +35,122 @@ import {
 } from "@/components/ui/table";
 import { LoanModel } from "@/app/utils/loanModel";
 import { useEffect, useState } from "react";
-import { getLoans } from "@/app/utils/loanCRUD";
+import { deleteLoan, getLoans } from "@/app/utils/loanCRUD";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-export const getColumns = (
+const getColumns = (
   onViewLoanDetails: (loan: LoanModel) => void
-): ColumnDef<LoanModel>[] => [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "loanstatus",
-    header: "Loan Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("loanstatus")}</div>
-    ),
-  },
-  {
-    accessorKey: "customername",
-    header: "Customer Name",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("customername")}</div>
-    ),
-  },
-  {
-    accessorKey: "customerphone",
-    header: "Customer Phone",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("customerphone")}</div>
-    ),
-  },
-  {
-    accessorKey: "customeremail",
-    header: "Customer Email",
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("customeremail")}</div>
-    ),
-  },
-  {
-    accessorKey: "loanamount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("loanamount"));
-      const formatted = new Intl.NumberFormat("en-GB", {
-        style: "currency",
-        currency: "ZAR",
-      }).format(amount);
-
-      return <div className="text-right font-medium">{formatted}</div>;
+): ColumnDef<LoanModel>[] => {
+  return [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const loanData = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="z-10 bg-gray-100">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => onViewLoanDetails(loanData)}>
-              View Loan Detail
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+    {
+      accessorKey: "loanstatus",
+      header: "Loan Status",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("loanstatus")}</div>
+      ),
     },
-  },
-];
+    {
+      accessorKey: "customername",
+      header: "Customer Name",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("customername")}</div>
+      ),
+    },
+    {
+      accessorKey: "customerphone",
+      header: "Customer Phone",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("customerphone")}</div>
+      ),
+    },
+    {
+      accessorKey: "customeremail",
+      header: "Customer Email",
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("customeremail")}</div>
+      ),
+    },
+    {
+      accessorKey: "loanamount",
+      header: () => <div className="text-right">Amount</div>,
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue("loanamount"));
+        const formatted = new Intl.NumberFormat("en-GB", {
+          style: "currency",
+          currency: "ZAR",
+        }).format(amount);
+        return <div className="text-right font-medium">{formatted}</div>;
+      },
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const loanData = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="z-10 bg-gray-100">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => onViewLoanDetails(loanData)}>
+                View Loan Detail
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+};
 
 export default function ListLoans() {
   const [data, setData] = useState<LoanModel[]>([]);
   const router = useRouter();
 
-  useEffect(() => {
-    async function GetLoanData() {
-      const data = await getLoans();
-      console.log(data);
-      setData(data);
-    }
+  async function GetLoanData() {
+    const data = await getLoans();
+    // console.log(data);
+    setData(
+      data.map((loan) => ({
+        ...loan,
+        loanstatus: loan.loanstatus as LoanModel["loanstatus"],
+      }))
+    );
+  }
 
+  async function deleteCurrentLoan(id: number) {
+    await deleteLoan(id);
+  }
+
+  useEffect(() => {
     GetLoanData();
   }, []);
 
@@ -291,6 +301,33 @@ export default function ListLoans() {
           >
             Next
           </Button>
+        </div>
+      </div>
+
+      <div className="flex h-[10vh] p-2">
+        <div className="flex flex-col w-full">
+          <div className="mt-auto flex justify-end">
+            <Button
+              className="bg-red-400"
+              disabled={table.getFilteredSelectedRowModel().rows.length === 0}
+              onClick={() => {
+                // console.log(table.getFilteredSelectedRowModel().rows);
+                table.getFilteredSelectedRowModel().rows.map((row) => {
+                  console.log(row);
+                  deleteCurrentLoan(Number(row.original.id));
+                });
+
+                GetLoanData();
+              }}
+            >
+              Delete Selected Loans
+            </Button>
+            <div className="ml-10">
+              <Button className="bg-yellow-400">
+                <Link href="/create-edit-loan-page">Create New Loan</Link>
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

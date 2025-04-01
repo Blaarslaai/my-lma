@@ -23,7 +23,7 @@
   2. GitHub Copilot
   3. ChatGPT
 
-## Setup Guide
+# Local Setup Guide
 
 Please follow the steps below to get the project running on your local
 
@@ -65,7 +65,7 @@ CREATE TABLE "Loan" (
   customerPhone VARCHAR(20) NOT NULL,  -- Phone number of the customer
   customerSalary FLOAT NOT NULL,  -- Salary of the customer
   loanAmount FLOAT NOT NULL,  -- Amount of the loan
-  interestRate FLOAT NOT NULL,  -- Interest rate for the loan
+  interestRate FLOAT[] NOT NULL,  -- Interest rate for the loan
   loanTerm INT NOT NULL,  -- Loan term in months
   startDate TIMESTAMP NOT NULL,  -- Loan start date
   endDate TIMESTAMP NOT NULL,  -- Loan end date
@@ -80,8 +80,8 @@ CREATE TABLE "Loan" (
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
-  NEW."updatedAt" = CURRENT_TIMESTAMP;
-  RETURN NEW;
+  Loan."updatedAt" = CURRENT_TIMESTAMP;
+  RETURN Loan;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -98,5 +98,19 @@ CREATE TRIGGER update_updated_at
 ```bash
 ollama pull llama3
 
-ollama run llama3
+ollama serve
 ```
+
+- Edit your .env.local file and add the following value for local testing: `OLLAMA_BASE_URL=http://localhost:11434`
+
+# Production Setup Guide
+
+1. Download and Install ngrok for local IP forwarding.
+
+- This will be used to access our local OLLAMA model on Vercel (Our Deployment platform)
+
+```bash
+ngrok http 11434
+```
+
+- Edit your .env.production file and add the following value for production testing: `OLLAMA_BASE_URL=<public URL from ngrok>`
