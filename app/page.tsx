@@ -1,6 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { useState } from "react";
 
 export default function Home() {
+  const [movingRight, setMovingRight] = useState(true);
+
   return (
     <>
       <div className="flex justify-center mt-10">
@@ -29,6 +35,26 @@ export default function Home() {
         >
           Go to Loans
         </Link>
+      </div>
+
+      {/* Llama Animation Container */}
+      <div className="flex justify-center items-center">
+        <div className="h-40 overflow-hidden mt-24 w-1/4 relative">
+          <motion.div
+            className="text-6xl absolute"
+            animate={{ x: movingRight ? "100%" : "0%" }}
+            transition={{
+              duration: 4,
+              ease: "linear",
+            }}
+            onAnimationComplete={() => setMovingRight((prev) => !prev)} // Flip direction at the end of each animation
+            style={{
+              scaleX: movingRight ? -1 : 1, // Flip the llama when moving left
+            }}
+          >
+            🦙💨
+          </motion.div>
+        </div>
       </div>
     </>
   );

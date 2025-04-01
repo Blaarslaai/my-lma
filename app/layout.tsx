@@ -8,6 +8,7 @@ import { AppProvider } from "./utils/AppContext";
 import { cookies } from "next/headers";
 import CookieBanner from "./components/cookieBanner";
 import { ThemeProvider } from "./components/theme";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,6 +70,7 @@ export default async function RootLayout({
 
                 {/* Cookie Banner (Global, not inside flex containers) */}
                 <CookieBanner />
+                <Toaster />
               </SidebarProvider>
             </div>
           </ThemeProvider>

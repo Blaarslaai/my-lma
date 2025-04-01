@@ -98,5 +98,11 @@ CREATE TRIGGER update_updated_at
 ```bash
 ollama pull llama3
 
-ollama run llama3
+ollama serve
 ```
+
+- Edit your .env file and add the following value for local testing: `OLLAMA_BASE_URL:"http://localhost:11434"`
+
+5. Download and Install NGROK for local IP forwarding.
+
+- This will be used to access our local OLLAMA model on Vercel (Our Deployment platform)
