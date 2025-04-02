@@ -75,20 +75,6 @@ CREATE TABLE "Loan" (
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Timestamp when the loan was created
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Timestamp when the loan was last updated
 );
-
--- Add trigger to update the 'updatedAt' field on any update
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-  Loan."updatedAt" = CURRENT_TIMESTAMP;
-  RETURN Loan;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER update_updated_at
-  BEFORE UPDATE ON "Loan"
-  FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
 ```
 
 3. Download and Install [ollama](https://ollama.com/)
