@@ -44,12 +44,12 @@ export async function calculateLoanPayment(
       - Loan Amount: ${loanamount}
       - Interest Rate: ${interestrate}%
       - Loan Term: ${loanterm} months
-      - Start Date: ${startdate} months
+      - Start Date: ${startdate}
 
       Calculate:
       - The monthly payment amount.
       - The total repayment amount.
-      - The calculated end date.
+      - The calculated end date (Make sure the day value is the same as the day value in startdate, only count up the months with the loan term).
 
       Only supply the three values as follows:
       monthlypayment: 0, totalrepayment: 0, enddate: "".

@@ -101,7 +101,7 @@ export default function CreateEditLoan() {
         values.loanamount,
         values.loanterm,
         values.interestrate[0],
-        values.startdate
+        new Date(values.startdate)
       );
 
       // const response = await fetch("/api/ollama", {
@@ -129,7 +129,7 @@ export default function CreateEditLoan() {
           .map((entry: { response: string }) => entry.response ?? "") // Ensure undefined/null values are handled
           .join("");
 
-        console.log(fullResponse);
+        // console.log(fullResponse);
 
         // Regular expression to match key-value pairs (handles numbers and quoted strings)
         const regex = /(\w+):\s*("[^"]*"|\d+(\.\d+)?)/g;
