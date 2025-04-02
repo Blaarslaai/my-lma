@@ -19,10 +19,13 @@ import { format } from "date-fns";
 import { LoanStatus } from "@/app/utils/LoanStatus";
 import { Slider } from "@/components/ui/slider";
 import { useTheme } from "next-themes";
+import { toast } from "sonner";
 
 export default function LoanDetails() {
   const { theme } = useTheme();
   const { id } = useParams(); // Get loan ID from URL
+
+  const [isEditing, setIsEditing] = useState(false);
   const [loan, setLoan] = useState<LoanModel>({
     id: 0,
     customername: "",
@@ -60,10 +63,13 @@ export default function LoanDetails() {
   }, [id]);
 
   async function editLoan() {
+    setIsEditing(true);
     if (loan) {
-      console.log(loan);
+      // console.log(loan);
       await updateLoan(loan);
     }
+    setIsEditing(false);
+    toast("Success", { description: "Loan Edited Successfully." });
   }
 
   const handleChange = (
@@ -267,7 +273,11 @@ export default function LoanDetails() {
             </Popover>
           </div>
           <div className="mt-auto">
-            <Button className="bg-yellow-400 float-end" onClick={editLoan}>
+            <Button
+              className="bg-yellow-400 float-end"
+              onClick={editLoan}
+              disabled={isEditing}
+            >
               Edit Loan Details
             </Button>
           </div>

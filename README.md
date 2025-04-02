@@ -106,7 +106,9 @@ ollama serve
 5. Run the following Prisma setup commands
 
 ```bash
-Prisma Generate
+npx prisma init
+
+npx prisma generate
 ```
 
 # Production Setup Guide
@@ -121,7 +123,9 @@ ngrok http 11434
 
 - Edit your .env file and add the following value for production testing: `OLLAMA_BASE_URL=<public URL from ngrok>`
 
-- [Production Hosting Url](https://my-lma.vercel.app/)
+# LIVE HOSTING EXAMPLE
+
+### [Production System Hosted Url](https://my-lma.vercel.app/)
 
 # AI Usage - NOTE!!!
 
