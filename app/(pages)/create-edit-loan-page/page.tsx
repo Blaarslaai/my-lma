@@ -35,6 +35,7 @@ export default function CreateEditLoan() {
   const { theme } = useTheme();
   const environment = process.env.NEXT_PUBLIC_ENV || "LOCAL";
 
+  const [isCreating, setIsCreating] = useState(false);
   const [values, setValues] = useState({
     customername: "",
     customeremail: "",
@@ -60,6 +61,8 @@ export default function CreateEditLoan() {
   }
 
   const calculateWithAI = async () => {
+    setIsCreating(true);
+
     if (environment === "LOCAL") {
       setValues((prev) => {
         // Clone startDate to prevent modification of original state
@@ -161,6 +164,9 @@ export default function CreateEditLoan() {
         }));
       }
     }
+
+    setIsCreating(false);
+    toast("Success", { description: "Loan Created Successfully." });
   };
 
   const handleChange = (
@@ -358,20 +364,22 @@ export default function CreateEditLoan() {
               <div className="flex">
                 <Button
                   className="bg-green-400"
-                  disabled={Object.entries(values).some(([key, value]) =>
-                    [
-                      "customername",
-                      "customeremail",
-                      "customerphone",
-                      "customersalary",
-                      "loanamount",
-                      "loanterm",
-                      "monthlypayment",
-                      "totalrepayment",
-                    ].includes(key)
-                      ? !value || value == 0 || value === ""
-                      : false
-                  )}
+                  disabled={
+                    Object.entries(values).some(([key, value]) =>
+                      [
+                        "customername",
+                        "customeremail",
+                        "customerphone",
+                        "customersalary",
+                        "loanamount",
+                        "loanterm",
+                        "monthlypayment",
+                        "totalrepayment",
+                      ].includes(key)
+                        ? !value || value == 0 || value === ""
+                        : false
+                    ) || isCreating
+                  }
                   onClick={createNewLoan}
                 >
                   Create Loan

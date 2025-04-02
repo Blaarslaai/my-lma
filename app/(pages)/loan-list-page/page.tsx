@@ -39,6 +39,7 @@ import { deleteLoan, getLoans } from "@/app/utils/loanCRUD";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LoanStatus } from "@/app/utils/LoanStatus";
+import { toast } from "sonner";
 
 const getColumns = (
   onViewLoanDetails: (loan: LoanModel) => void
@@ -133,6 +134,7 @@ const getColumns = (
 };
 
 export default function ListLoans() {
+  const [isDeleting, setIsDeleting] = useState(false);
   const [data, setData] = useState<LoanModel[]>([]);
   const router = useRouter();
 
@@ -150,7 +152,12 @@ export default function ListLoans() {
   }
 
   async function deleteCurrentLoan(id: number) {
+    setIsDeleting(true);
+
     await deleteLoan(id);
+
+    setIsDeleting(false);
+    toast("Success", { description: "Loan(s) deleted successfully." });
   }
 
   useEffect(() => {
@@ -312,7 +319,10 @@ export default function ListLoans() {
           <div className="mt-auto flex justify-end">
             <Button
               className="bg-red-400"
-              disabled={table.getFilteredSelectedRowModel().rows.length === 0}
+              disabled={
+                table.getFilteredSelectedRowModel().rows.length === 0 ||
+                isDeleting
+              }
               onClick={() => {
                 // console.log(table.getFilteredSelectedRowModel().rows);
                 table.getFilteredSelectedRowModel().rows.map((row) => {
