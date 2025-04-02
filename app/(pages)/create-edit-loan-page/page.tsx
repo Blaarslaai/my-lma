@@ -52,17 +52,20 @@ export default function CreateEditLoan() {
   });
 
   async function createNewLoan() {
+    setIsCreating(true);
+
     await createLoan({
       ...values,
       id: 0,
       createdat: new Date(),
       updatedat: new Date(),
     });
+
+    setIsCreating(false);
+    toast("Success", { description: "Loan Created Successfully." });
   }
 
   const calculateWithAI = async () => {
-    setIsCreating(true);
-
     if (environment === "LOCAL") {
       setValues((prev) => {
         // Clone startDate to prevent modification of original state
@@ -164,9 +167,6 @@ export default function CreateEditLoan() {
         }));
       }
     }
-
-    setIsCreating(false);
-    toast("Success", { description: "Loan Created Successfully." });
   };
 
   const handleChange = (
