@@ -38,6 +38,7 @@ import { useEffect, useState } from "react";
 import { deleteLoan, getLoans } from "@/app/utils/loanCRUD";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { LoanStatus } from "@/app/utils/LoanStatus";
 
 const getColumns = (
   onViewLoanDetails: (loan: LoanModel) => void
@@ -141,7 +142,9 @@ export default function ListLoans() {
     setData(
       data.map((loan) => ({
         ...loan,
-        loanstatus: loan.loanstatus as LoanModel["loanstatus"],
+        loanstatus: LoanStatus[loan.loanstatus as keyof typeof LoanStatus],
+        createdat: loan.createdat ? new Date(loan.createdat) : new Date(),
+        updatedat: loan.updatedat ? new Date(loan.updatedat) : new Date(),
       }))
     );
   }

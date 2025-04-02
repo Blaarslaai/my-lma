@@ -7,16 +7,22 @@ export default function CookieBanner() {
   const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
-    const hasConsent = document.cookie.includes("cookieConsent=true");
-    // If cookieConsent is not set, show the banner
-    if (!hasConsent) {
-      setShowBanner(true);
+    // Read the cookie from the server (via an API call)
+    async function checkCookie() {
+      const res = await fetch("/api/check-cookie");
+      const data = await res.json();
+
+      if (!data.hasConsent) {
+        setShowBanner(true);
+      }
     }
+
+    checkCookie();
   }, []);
 
   const handleAccept = async () => {
-    await acceptCookies(); // Set the cookie on the server
-    setShowBanner(false); // Hide the banner
+    await acceptCookies();
+    setShowBanner(false);
   };
 
   return showBanner ? (

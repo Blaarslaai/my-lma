@@ -29,10 +29,11 @@ import {
 import { toast } from "sonner";
 import "dotenv/config";
 import { createLoan } from "@/app/utils/loanCRUD";
+import { calculateLoanPayment } from "@/app/utils/serverActions";
 
 export default function CreateEditLoan() {
   const { theme } = useTheme();
-  const environment = process.env.NEXT_PUBLIC_ENV;
+  const environment = process.env.NEXT_PUBLIC_ENV || "LOCAL";
 
   const [values, setValues] = useState({
     customername: "",
@@ -59,7 +60,7 @@ export default function CreateEditLoan() {
   }
 
   const calculateWithAI = async () => {
-    if (environment !== "AI") {
+    if (environment === "LOCAL") {
       setValues((prev) => {
         // Clone startDate to prevent modification of original state
         const startDate = new Date(values.startdate);
@@ -94,26 +95,70 @@ export default function CreateEditLoan() {
           monthlypayment: monthlyPayment,
         };
       });
-    } else {
-      const response = await fetch("/api/ollama", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customersalary: values.customersalary,
-          loanamount: values.loanamount,
-          loanterm: values.loanterm,
-          interestrate: values.interestrate[0],
-          startdate: values.startdate,
-        }),
-      });
+    } else if (environment === "AI") {
+      const response = await calculateLoanPayment(
+        values.customersalary,
+        values.loanamount,
+        values.loanterm,
+        values.interestrate[0],
+        values.startdate
+      );
 
-      const data = await response.json();
+      // const response = await fetch("/api/ollama", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     customersalary: values.customersalary,
+      //     loanamount: values.loanamount,
+      //     loanterm: values.loanterm,
+      //     interestrate: values.interestrate[0],
+      //     startdate: values.startdate,
+      //   }),
+      // });
 
-      if (data.error) {
-        toast("Error", { description: data.error });
-      } else {
+      if (response.error) {
+        toast("Error", { description: response.error });
+      } else if (response.result) {
         toast("Success", { description: "AI-calculated values received!" });
-        console.log(data.result);
+        const dataArray = response.result
+          .split("\n")
+          .filter((line: string) => line.trim() !== "") // Remove empty lines
+          .map((line: string) => JSON.parse(line));
+
+        const fullResponse = dataArray
+          .map((entry: { response: string }) => entry.response ?? "") // Ensure undefined/null values are handled
+          .join("");
+
+        console.log(fullResponse);
+
+        // Regular expression to match key-value pairs (handles numbers and quoted strings)
+        const regex = /(\w+):\s*("[^"]*"|\d+(\.\d+)?)/g;
+        const result: Record<string, string | number> = {};
+
+        let match;
+        while ((match = regex.exec(fullResponse)) !== null) {
+          const key = match[1]; // Key (e.g., "monthlypayment")
+          let value = match[2]; // Value (number or quoted string)
+          let placeHolder = 0;
+
+          // Check if value is a quoted string
+          if (value.startsWith('"') && value.endsWith('"')) {
+            value = value.slice(1, -1); // Remove surrounding quotes
+            result[key] = value;
+          } else {
+            placeHolder = Number(value);
+            result[key] = placeHolder; // Convert to number if it's numeric
+          }
+        }
+
+        // console.log(result);
+
+        setValues((prev) => ({
+          ...prev,
+          enddate: new Date(result.enddate),
+          totalrepayment: Number(result.totalrepayment),
+          monthlypayment: Number(result.monthlypayment),
+        }));
       }
     }
   };

@@ -113,8 +113,10 @@ ollama serve
 ngrok http 11434
 ```
 
-- Edit your .env.production file and add the following value for production testing: `OLLAMA_BASE_URL=<public URL from ngrok>`
+- Edit your .env file and add the following value for production testing: `OLLAMA_BASE_URL=<public URL from ngrok>`
+
+- [Production Hosting Url](https://my-lma.vercel.app/)
 
 # AI Usage - NOTE!!!
 
-If you wish to run the AI model, add the following to your environment file: `NEXT_PUBLIC_ENV=AI`
+If you wish to run the AI model, ADD the following to your environment file: `NEXT_PUBLIC_ENV=AI`

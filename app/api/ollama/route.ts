@@ -30,11 +30,14 @@ export async function POST(req: Request) {
       - Start Date: ${startdate} months
 
       Calculate:
-      - The monthly payment amount
-      - The total repayment amount
-      - Any financial insights
+      - The monthly payment amount.
+      - The total repayment amount.
+      - The calculated end date.
 
-      Only supply the three values in the order 
+      Only supply the three values as follows:
+      monthlypayment: 0, totalrepayment: 0, enddate: "".
+
+      Make sure that the response ONLY contains the three values as described above.
     `;
 
     // Send request to Ollama
