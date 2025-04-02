@@ -103,6 +103,12 @@ ollama serve
 
 - Edit your .env.local file and add the following value for local testing: `OLLAMA_BASE_URL=http://localhost:11434`
 
+5. Run the following Prisma setup commands
+
+```bash
+Prisma Generate
+```
+
 # Production Setup Guide
 
 1. Download and Install ngrok for local IP forwarding.
@@ -120,3 +126,6 @@ ngrok http 11434
 # AI Usage - NOTE!!!
 
 If you wish to run the AI model, ADD the following to your environment file: `NEXT_PUBLIC_ENV=AI`
+Otherwise, the system will override the AI functionality and just generate values.
+
+Please NOTE, your machine has to be strong enough to run a local AI model, otherwise the delay in responses will be tremendous!
